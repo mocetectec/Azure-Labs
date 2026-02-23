@@ -1,4 +1,4 @@
-## 🎬 [Watch Me Build This Lab!](https://www.loom.com/share/8987ab76277744c69d1cb369bf995c12)
+## 🎬 [Watch Me Build This Lab!](https://www.loom.com/share/6f3ad7dd35d447578dca41f3f0e54fd8)
 
 # Hosting a Static Website on an Azure Storage Account
 
