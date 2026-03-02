@@ -1,7 +1,9 @@
+## 🎬 [Watch Me Build This Lab!](https://www.loom.com/share/ded2453fefe644d582a03cfd5f34187c)
+
 # How to Create a Linux VM in Azure via CLI
 
 ## Overview
-This guide walks through creating a Linux Virtual Machine (VM) in Azure using the Azure CLI. 
+This guide walks through creating a Linux Virtual Machine (VM) using the Azure CLI. 
 
 ## Environment Setup
 - **Cloud Provider**: Azure
