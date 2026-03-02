@@ -1,3 +1,5 @@
+## 🎬 [Watch Me Build This Lab!](https://www.loom.com/share/a69d3614aecd46be9eb85580056fa3d7)
+
 # 🔐 Azure SQL (PaaS) + Key Vault + Managed Identity
 
 ## 📌 Project Overview
@@ -166,6 +168,9 @@ To validate deployment health:
    - DTU Percentage
    - Aggregation: Max
 
+  <img width="2397" height="1058" alt="image" src="https://github.com/user-attachments/assets/ea864deb-a623-4185-81a4-f17621aeaeeb" />
+
+  
 This confirmed:
 
 - Database availability
