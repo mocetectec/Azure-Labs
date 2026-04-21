@@ -129,8 +129,7 @@ resource "aws_instance" "source_vm" {
     encrypted   = false
   }
   
-  # The EC2 instance uses a PowerShell `user_data` block to automate first-boot configuration. In this phase, it sets the local Administrator password and applies baseline WinRM settings so the source VM can later be accessed for Azure Migrate discovery and troubleshooting.
-  user_data = <<-EOF
+   user_data = <<-EOF
     <powershell>
     net user Administrator "${var.admin_password}"
     winrm quickconfig -force

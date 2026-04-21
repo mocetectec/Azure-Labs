@@ -1,6 +1,6 @@
 # Phase 1 — AWS Source Infrastructure
 
-This phase provisions the AWS environment that serves as the source workload for the migration. It deploys a Windows Server 2022 EC2 instance inside a public VPC — the machine that will be discovered, assessed, and migrated to Azure in the phases that follow.
+This phase provisions the AWS environment that serves as the source workload for the migration. It deploys a Windows Server 2022 EC2 instance inside a public VPC - the machine that will be discovered, assessed, and migrated to Azure in the phases that follow.
 
 All infrastructure in this phase is managed with Terraform.
 
@@ -10,13 +10,13 @@ All infrastructure in this phase is managed with Terraform.
 
 | Resource | Details |
 |---|---|
-| VPC | 10.0.0.0/16 — isolated network boundary |
-| Public Subnet | 10.0.1.0/24 — hosts the EC2 instance |
+| VPC | 10.0.0.0/16 - isolated network boundary |
+| Public Subnet | 10.0.1.0/24 - hosts the EC2 instance |
 | Internet Gateway | Provides public internet access |
 | Route Table | Routes 0.0.0.0/0 traffic through the internet gateway |
 | Security Group | Inbound rules required for the working Azure Migrate discovery and replication flow |
-| EC2 Instance | Windows Server 2022 — the source workload |
-| EBS Volume | 30GB gp3 root volume — this is the disk that gets replicated |
+| EC2 Instance | Windows Server 2022 - the source workload |
+| EBS Volume | 30GB gp3 root volume - this is the disk that gets replicated |
 
 ---
 
@@ -100,15 +100,15 @@ Each port serves a specific role in the migration process:
 
 | Port | Protocol | Purpose | Phase Used |
 |------|----------|---------|------------|
-| 443 | TCP | HTTPS — appliance control plane communication | Discovery & Replication |
-| 3389 | TCP | RDP — admin access for verification | All phases |
-| 5985 | TCP | WinRM HTTP — OS-level discovery | Discovery |
-| 445 | TCP | SMB — mobility service file transfer | Replication |
-| 9443 | TCP | ASR replication data — Mobility Agent to Process Server | Replication |
+| 443 | TCP | HTTPS - appliance control plane communication | Discovery & Replication |
+| 3389 | TCP | RDP - admin access for verification | All phases |
+| 5985 | TCP | WinRM HTTP - OS-level discovery | Discovery |
+| 445 | TCP | SMB - mobility service file transfer | Replication |
+| 9443 | TCP | ASR replication data - Mobility Agent to Process Server / Replication |
 
 > **Note:** Azure Migrate discovery depends on both network connectivity and OS-level configuration. Even with the correct ports open, discovery can fail if WinRM or authentication settings are misconfigured.
 
-In this implementation, only the ports required for the working discovery and replication flow were opened. Additional ports (such as 135 or 5986) may be required in other environments but were not necessary for this lab.
+In this implementation, the ports required for the working discovery and replication flow were opened. Additional ports (such as 135 or 5986) may be required in other environments.
 
 > Opening these ports to `0.0.0.0/0` is acceptable for a short-lived lab. In production, restrict to known IP ranges.
 
@@ -118,7 +118,7 @@ Windows Server requires a minimum of 2 vCPUs and 4GB RAM to run without being un
 In this lab, I used an `m7i-flex.large` instance due to AWS free tier constraints, but any instance type meeting the minimum requirements will work for the migration process.
 
 **Why gp3 for the EBS volume?**
-gp3 is the current generation general purpose SSD in AWS. It provides better baseline performance than gp2 at the same or lower cost. This is the disk that gets replicated to Azure — the volume type does not affect the migration process itself.
+gp3 is the current generation general purpose SSD in AWS. It provides a better baseline performance than gp2 at the same or lower cost. This is the disk that gets replicated to Azure, the volume type does not affect the migration process itself.
 
 **Why use `user_data`?**
 The EC2 instance uses a PowerShell `user_data` block to perform first-boot configuration automatically. In this project, it was used to:
@@ -171,7 +171,7 @@ Destroy all resources immediately after completing the lab.
 terraform destroy
 ```
 
-Confirm with `yes` when prompted. All 10 resources will be destroyed.
+Confirm with `yes` when prompted.
 
 > Destroy the AWS side **before** the Azure side to avoid any dependency issues during cleanup.
 
@@ -185,7 +185,7 @@ Confirm with `yes` when prompted. All 10 resources will be destroyed.
 Error: AccessDenied: User is not authorized to perform: ec2:CreateSecurityGroup
 ```
 
-Your Terraform IAM user is missing EC2 permissions. Go to IAM → Users → your Terraform user → Add permissions. Attach the `AmazonEC2FullAccess` and `AmazonVPCFullAccess` managed policies, then re-run `terraform apply`.
+Your Terraform IAM user is missing EC2 permissions. Go to IAM >Users > your Terraform user > Add permissions. Attach the `AmazonEC2FullAccess` and `AmazonVPCFullAccess` managed policies, then re-run `terraform apply`.
 
 ---
 
