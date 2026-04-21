@@ -1,0 +1,4 @@
+yourname       = "your-name-here"
+location       = "East US"
+appliance_admin_password   = "YourSecureP@ssword123!"
+replication_admin_password = "YourSecureP@ssword123!"
