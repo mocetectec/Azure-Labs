@@ -1,4 +1,4 @@
-# Phase 1 — AWS Source Infrastructure
+# Phase 1 - AWS Source Infrastructure
 
 This phase provisions the AWS environment that serves as the source workload for the migration. It deploys a Windows Server 2022 EC2 instance inside a public VPC - the machine that will be discovered, assessed, and migrated to Azure in the phases that follow.
 
@@ -52,7 +52,7 @@ phase-1-aws-infrastructure/
 
 ## How to Deploy
 
-**Step 1 — Copy the example vars file and fill in your values:**
+**Step 1 - Copy the example vars file and fill in your values:**
 
 ```powershell
 copy terraform.tfvars.example terraform.tfvars
@@ -68,19 +68,19 @@ admin_password = "YourSecureP@ssword123!"
 
 > Password requirements: minimum 12 characters, must include uppercase, lowercase, numbers, and symbols. AWS will reject weak passwords.
 
-**Step 2 — Initialize Terraform:**
+**Step 2 - Initialize Terraform:**
 
 ```powershell
 terraform init
 ```
 
-**Step 3 — Review the plan:**
+**Step 3 - Review the plan:**
 
 ```powershell
 terraform plan
 ```
 
-**Step 4 — Deploy:**
+**Step 4 - Deploy:**
 
 ```powershell
 terraform apply
@@ -219,4 +219,4 @@ Windows Server takes 5–7 minutes to fully initialize after Terraform reports c
 
 Once you have confirmed RDP access to the EC2 instance, proceed to:
 
-**[Phase 2 — Azure Infrastructure →](../phase-2-azure-infrastructure/README.md)**
+**[Phase 2 — Azure Infrastructure](../phase-2-azure-infrastructure/README.md)**
