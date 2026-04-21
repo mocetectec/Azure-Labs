@@ -161,7 +161,7 @@ The original lab sizing was not sufficient in this environment, so the appliance
 - **Migration Appliance VM:** `Standard_E2s_v3` — sufficient for discovery and appliance setup in this lab.
 - **Replication Appliance VM:** `Standard_D16s_v3` with a 650 GB OS disk — required to meet the replication appliance manager validation requirements for CPU and disk capacity.
 
-In practice, the replication appliance required the equivalent of **8 CPU cores** and at least **600 GB of disk space** to complete setup successfully. This reflects real-world scenarios where lab defaults may need to be adjusted based on platform constraints.
+>In practice, the replication appliance required the equivalent of **8 CPU cores** and at least **600 GB of disk space** to complete setup successfully. This reflects real-world scenarios where lab defaults may need to be adjusted based on platform constraints.
 ---
 
 ## Save Your Outputs
@@ -307,4 +307,4 @@ Solution:
 
 Once the Azure infrastructure and appliance VMs are successfully deployed and verified, proceed to:
 
-**[Phase 3 — Appliance Deployment and Discovery →](../phase-3-appliance-and-discovery/README.md)**
+**[Phase 3 — Appliance Deployment and Discovery](../phase-3-appliance-and-discovery/README.md)**
