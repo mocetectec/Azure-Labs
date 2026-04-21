@@ -1,0 +1,3 @@
+aws_region     = "us-east-1"
+yourname       = "your-name-here"
+admin_password = "YourSecureP@ssword123!"
