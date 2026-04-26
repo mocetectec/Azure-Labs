@@ -1,111 +1,111 @@
 # ☁️ Azure Cloud Labs
 
-Welcome to my Azure Cloud Labs repository! This repo contains hands-on projects and labs designed to demonstrate practical skills in Microsoft Azure, cloud architecture, security, governance, and Infrastructure as Code (IaC).
+Welcome to my Azure Cloud Labs repository.
 
-Each project focuses on real-world scenarios and best practices used in cloud engineering.
-
----
-
-## 📂 Projects Overview
-
-### 🐧 How to Create a Linux VM in Azure via CLI
-A step-by-step guide to deploying a Linux Virtual Machine using the Azure CLI.
-
-**What You’ll Learn:**
-- Creating resource groups
-- Deploying VMs via CLI commands
-- SSH access configuration
-
-**Key Concepts:**
-- Azure CLI automation
-- Infrastructure provisioning
-- Basic compute management
+This repository documents my progression from foundational Azure labs to a full **end-to-end cross-cloud migration project**, demonstrating real-world cloud engineering, infrastructure design, and troubleshooting.
 
 ---
 
-### 🌐 Hosting a Static Website on Azure Storage
-Learn how to host a static website using Azure Blob Storage.
+## 🚀 Featured Project
 
-**What’s Covered:**
-- Enabling static website hosting
-- Uploading HTML/CSS/JS files
-- Accessing via public endpoint
+### 🔁 AWS to Azure Migration (End-to-End)
+
+A complete cross-cloud migration of a Windows Server workload from **AWS EC2 to Azure** using **Azure Migrate, Azure Site Recovery, and Terraform**.
+
+This project implements the full migration lifecycle:
+- Infrastructure provisioning (AWS + Azure via Terraform)
+- Discovery and assessment (WinRM/WMI)
+- Replication (Azure Site Recovery)
+- Test migration and cutover
+- Post-migration validation and troubleshooting
+
+**Highlights:**
+- Cross-cloud migration without VPN (public endpoint communication)
+- Deep troubleshooting of WinRM, WMI, DNS, and replication issues
+- Identification and resolution of undocumented behavior (mobility agent private IP hardcoding)
+- Structured troubleshooting knowledge base (Phase 5)
 
 **Key Concepts:**
+- Hybrid / multi-cloud architecture
+- Migration workflows and replication pipelines
+- OS-level vs network-level troubleshooting
+- Infrastructure as Code (Terraform)
+
+👉 [View Project →](./aws-to-azure-migration/README.md)
+
+---
+
+## 📂 Other Azure Labs
+
+### 🐧 Linux VM Deployment via Azure CLI
+Deploy and manage a Linux VM using Azure CLI.
+
+**Concepts:**
+- Resource groups
+- VM provisioning
+- SSH access
+
+---
+
+### 🌐  Static Website Hosting on Azure Storage
+Host a static website using Azure Blob Storage.
+
+**Concepts:**
 - Serverless hosting
-- Cost-effective web deployment
 - Storage accounts
+- Public endpoints
 
 ---
 
-### 🔐 Secure 2-Tier Web Application in Microsoft Azure
-This project demonstrates a secure, production-style 2-tier architecture in Azure:
-- Public-facing **web tier**
-- Private **database tier**
-- Network isolation using **subnets**
-- Access control enforced with **NSGs and firewall rules**
+### 🔐 Secure 2-Tier Web Application
+Build a secure web + database architecture using VNets and NSGs.
 
-**Key Concepts:**
-- Virtual Networks (VNet)
-- Subnet segmentation
-- Network security best practices
+**Concepts:**
+- Network segmentation
+- Security controls
+- Private vs public tiers
 
 ---
 
-### 🛡️ Azure Governance with RBAC, Policy, and Budgets
-This lab focuses on implementing governance controls in Azure to manage access, enforce compliance, and control costs.
+### 🛡️ Azure Governance (RBAC, Policy, Budgets)
+Implement governance controls for access, compliance, and cost.
 
-**What’s Included:**
-- Role-Based Access Control (RBAC) with restricted user roles
-- Azure Policy to block expensive or non-compliant resources
-- Budget creation with cost alerts
-
-**Key Concepts:**
+**Concepts:**
 - Least privilege access
 - Policy enforcement
 - Cost management
 
 ---
 
-### 🔑 Azure SQL (PaaS) + Key Vault + Managed Identity
-This project demonstrates a secure, cloud-native backend architecture using Azure PaaS services.
+### 🔑  Azure SQL + Key Vault + Managed Identity
+Secure backend architecture using Azure PaaS services.
 
-**Highlights:**
-- Azure SQL Database (PaaS)
-- Azure Key Vault for secrets management
-- Managed Identity for secure authentication (no hardcoded credentials)
-
-**Key Concepts:**
+**Concepts:**
+- Managed identity
 - Secretless authentication
-- Principle of least privilege
-- Secure service-to-service communication
-
+- Secure service communication
 ---
 
 ### 🏗️ Terraform Azure Networking Lab
-This lab introduces Infrastructure as Code (IaC) using Terraform to deploy Azure networking resources.
+Deploy Azure networking resources using Terraform.
 
-**What You’ll Learn:**
-- Writing Terraform configuration files
-- Deploying VNets and subnets
-- Using Azure Cloud Shell with Terraform
-
-**Key Concepts:**
-- Infrastructure as Code (IaC)
-- Automation and reproducibility
-- Declarative resource management
+**Concepts:**
+- Infrastructure as Code
+- Automation
+- Declarative configuration
 
 ---
 
 ## 🧠 Skills Demonstrated
 
+- Cross-Cloud Migration (AWS → Azure)
 - Cloud Architecture Design
 - Azure Networking & Security
 - Identity & Access Management (IAM)
-- Cost Governance & Policy Enforcement
 - Infrastructure as Code (Terraform)
-- CLI-based Automation
-- PaaS & Serverless Solutions
+- Troubleshooting Distributed Systems
+- Azure Migrate & Azure Site Recovery
+- CLI-Based Automation
 
 ---
 
