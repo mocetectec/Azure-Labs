@@ -11,17 +11,38 @@ End-to-end cross-cloud migration of a Windows Server workload from AWS EC2 to Az
 
 This project implements the full migration lifecycle - infrastructure provisioning, discovery, assessment, replication, and cutover — and includes detailed troubleshooting of real-world issues encountered in a cross-cloud environment without private connectivity.
 
+🎥 **Video walkthrough:** [AWS to Azure Migration — End-to-End Cross-Cloud Project](https://www.loom.com/share/8b101048501543249deef004c3789955)
 ---
 
 ## Architecture
 
-The migration spans two cloud environments with no VPN or ExpressRoute between them. All communication between AWS and Azure is performed over public endpoints, requiring explicit handling of DNS resolution, WinRM configuration, and replication connectivity.
+The diagram below shows the full cross-cloud migration setup between AWS and Azure.
 
-**AWS side** - Windows Server 2022 EC2 instance (t3.medium or similar) inside a public VPC, configured with all ports required for Azure Migrate discovery and replication.
+The source environment is hosted in AWS. A Windows Server 2022 EC2 instance runs inside a custom VPC with a public subnet, accessible over the internet.
 
-**Azure staging** - Two appliance VMs, an Azure Migrate project, Recovery Services Vault, and a storage account used as a replication cache. All migration infrastructure lives here and is destroyed after cutover.
+Azure is divided into two resource groups:
 
-**Azure target** - The final migrated VM created at cutover from the replicated disk.
+- **Staging (`rg-migrate-source-<yourname>`)**  
+  Hosts all migration infrastructure, including:
+  - Azure Migrate project
+  - Recovery Services Vault
+  - Storage account (replication cache)
+  - Discovery appliance VM
+  - Replication appliance VM
+
+- **Target (`rg-migrate-target-<yourname>`)**  
+  Contains the final migrated VM after cutover
+
+Two Azure Migrate appliances are used:
+
+- **Discovery appliance** — collects inventory and performance data from the EC2 instance via WinRM/WMI  
+- **Replication appliance** — manages disk replication using Azure Site Recovery
+
+> **Key design decision:** All communication between AWS and Azure occurs over public endpoints — there is no VPN or private connectivity.  
+> This simplifies the lab setup but introduces additional complexity around authentication, DNS resolution, and replication connectivity.
+
+<img width="1916" height="1364" alt="image" src="https://github.com/user-attachments/assets/8a09177d-e989-46cf-8974-5b05072e36dd" />
+
 
 ---
 
