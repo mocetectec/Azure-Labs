@@ -5,6 +5,8 @@ By this phase, all infrastructure is already deployed. The EC2 instance is runni
 This phase bridges the gap between infrastructure provisioning and actual migration by establishing communication between the environments and confirming that the source machine can be successfully assessed.
 
 > **Important:** Discovery depends on both network connectivity and OS-level configuration. Even if ports are open, discovery will fail if WinRM, WMI, or authentication settings are not configured correctly.
+
+🎥 **Video walkthrough:** [AWS to Azure Migration — Phase 3](https://www.loom.com/share/7f06a976f4d749ebb0cfe5ec8485f32a)
 ---
 
 ## What This Phase Covers
@@ -132,8 +134,17 @@ Once WinRM and connectivity are fully validated, the remaining steps follow the 
 
 1. Register both the migration appliance and replication appliance in the Azure portal
 2. Add Windows credentials for the EC2 instance
+   
+   <img width="1082" height="327" alt="image" src="https://github.com/user-attachments/assets/6b265cd4-c953-46c0-8b91-9baf3ee4ef0c" />
+
 3. Configure the discovery source using the EC2 public IP
+
+    <img width="1082" height="441" alt="image" src="https://github.com/user-attachments/assets/1ad88a8d-4057-4815-953b-b321f11c1f8d" />
+   
 4. Start discovery and wait for the machine to appear
+
+   <img width="1557" height="307" alt="image" src="https://github.com/user-attachments/assets/5bc2e362-30fe-47dd-b132-8c80ce82f72b" />
+
 5. Run an assessment to evaluate Azure readiness and recommended sizing
 
 > The Azure Migrate appliance configuration manager is used throughout this process to register appliances, manage credentials, and monitor discovery progress.
@@ -173,6 +184,9 @@ If either query fails, the error output identifies the specific blocker. Do not 
 | Hostname (EC2AMAZ-XXXXXXX) | Discovery successful — WMI completed |
 | IP address only | WMI incomplete — fix WinRM configuration |
 
+<img width="1397" height="211" alt="image" src="https://github.com/user-attachments/assets/b6a37afa-3113-4fba-87e4-c8988028ec85" />
+
+
 ---
 
 ## Assessment
@@ -186,6 +200,8 @@ After discovery completes, an assessment is run to evaluate:
 A successful result should show:
 - **Ready for Azure**
 - A performance-based VM recommendation
+
+<img width="1132" height="366" alt="image" src="https://github.com/user-attachments/assets/3c9ffde0-214a-437f-b2b6-a81b5472818d" />
 
 Any “Ready with Conditions” or “Not Ready” results include specific remediation steps.
 
