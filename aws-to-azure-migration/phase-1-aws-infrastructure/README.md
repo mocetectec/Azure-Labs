@@ -4,7 +4,7 @@ This phase provisions the AWS environment that serves as the source workload for
 
 All infrastructure in this phase is managed with Terraform.
 
-🎥 **Video walkthrough:** [AWS to Azure Migration — End-to-End Cross-Cloud Project](https://www.loom.com/share/0d5b65f8b7e449e899e82fe4cca66b68)
+🎥 **Video walkthrough:** [AWS to Azure Migration — Phase 1](https://www.loom.com/share/0d5b65f8b7e449e899e82fe4cca66b68)
 ---
 
 ## What This Phase Builds
