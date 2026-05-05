@@ -32,7 +32,7 @@ Issues related to Azure Migrate project configuration and subscription-level set
 
 ---
 
-### [Discovery and Appliance Issues](./appliance-and-discovery-issues.md)
+### [Discovery and Appliance Issues](./discovery-issues.md)
 Issues encountered during appliance registration, WinRM configuration, and discovery.
 
 | Issue | Quick Summary |
