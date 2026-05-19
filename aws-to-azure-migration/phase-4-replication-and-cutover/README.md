@@ -4,6 +4,7 @@ This phase covers the replication and cutover process using Azure Migrate and Az
 
 By the end of this phase, the source workload has been successfully replicated, tested, and migrated into Azure.
 
+🎥 **Video walkthrough:** [AWS to Azure Migration — Phase 4](https://www.loom.com/share/d75b783af6124b76b0ee5f970385709b)
 ---
 
 ## What This Phase Covers

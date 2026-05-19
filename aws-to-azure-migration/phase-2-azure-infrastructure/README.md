@@ -4,6 +4,7 @@ This phase provisions the Azure staging and target environment used by Azure Mig
 
 All infrastructure in this phase is managed with Terraform.
 
+🎥 **Video walkthrough:** [AWS to Azure Migration — Phase 2](https://www.loom.com/share/3d7395ad7c9c43df9567139ed3a76374)
 ---
 
 ## What This Phase Builds
