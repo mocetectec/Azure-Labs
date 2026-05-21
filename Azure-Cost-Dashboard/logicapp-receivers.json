@@ -1,8 +1,0 @@
-[
-  {
-    "callbackUrl": "https://prod-14.eastus.logic.azure.com:443/workflows/c73db1e690054abb8f2adf3c48b11248/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=hEQQPZxJT2BC8XTD8QtBEtxish2D3_7FzDPsh_9CHZo",
-    "name": "la-webhook",
-    "useCommonAlertSchema": true,
-    "resourceId": "/subscriptions/e03c5e64-a7ec-4136-8338-4edcca6925b2/resourceGroups/rg-cost-dashboard-xcm/providers/Microsoft.Logic/workflows/la-cost-alert-xcm"
-  }
-]
