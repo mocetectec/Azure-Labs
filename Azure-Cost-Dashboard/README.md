@@ -286,7 +286,7 @@ A successful run entry confirmed the Action Group was able to trigger the Logic 
 
 ### Cost Data Test
 
-Because the subscription initially had no cost data, a public IP resource was deployed to generate a small amount of billable usage.
+Because the subscription initially had no cost data, a public IP resource was deployed to generate a small amount of billable usage. This confirmed that cost data was flowing into the Workbook and that the alerting thresholds had real spend to evaluate against.
 
 --- 
 
@@ -479,19 +479,13 @@ This helped confirm that the public IP test resource was generating networking-r
 
 ---
 
-### Workbook Notes
+### Considerations
 
-- Cost Management data is not real-time.
-- New usage may take several hours to appear.
-- Very small costs may appear as `$0.00` if the workbook rounds values.
-- The Cost Management API returns grouped rows as arrays, which required JSON Path mapping in the workbook.
-- Azure Resource Manager queries provided a working alternative when Cost Management was not available from the Metrics picker.
-
-## Things to know before you deploy
-
-- Azure Cost Management data is not real-time.
-- New usage may take several hours to appear in Cost Management and Workbooks.
-- Very small charges may appear as `$0.00` if the workbook visualization rounds values.
+- Cost Management data is not real-time — new usage can take several hours to appear in dashboards and trigger alerts
+- Very small charges may display as $0.00 if the Workbook visualization rounds values
+- The Cost Management API returns grouped rows as arrays, which required JSON Path mapping in the Workbook
+- The Logic App callback URL contains a sensitive sig parameter and should never be committed to source control or shared publicly — if exposed, regenerate the trigger URL immediately and update the Action Group receiver
+- Azure Resource Manager queries are a reliable alternative when Cost Management is not available through the standard Metrics picker
 
 ## Troubleshooting
 
@@ -536,10 +530,8 @@ To remove the deployed infrastructure:
 terraform destroy
 ```
 
-When prompted, enter:
+Type `yes` when prompted. This deletes all Terraform-managed resources including the resource group, budget, Logic App, and Log Analytics Workspace.
 
-```text
-yes
-```
+---
 
-This deletes the Terraform-managed resources, including the resource group, budget, Logic App, and Log Analytics Workspace.
+<i>Part of my Azure cloud portfolio. Follow along as I build and document real-world cloud solutions.</i>
