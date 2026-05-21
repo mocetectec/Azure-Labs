@@ -1,3 +1,4 @@
+
 # Azure Cost Visibility Dashboard
 
 ![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=flat&logo=terraform&logoColor=white)
@@ -33,9 +34,15 @@ What it provides:
 
 The system is event-driven. Azure Cost Management evaluates subscription spend against the monthly budget. When actual costs cross a defined threshold, it fires an event to an Action Group - a reusable notification hub that knows who to contact and how. The Action Group triggers a Logic App, which formats the alert into a readable email and delivers it to the right inbox. Everything that happens between the budget breach and the email landing is automated.
 
+<p align="center">
+  <img width="850" height="750" alt="azcostdashboard(1)" src="https://github.com/user-attachments/assets/5a22c616-374e-465a-a1ba-f84a5dd93da3" />
+</p>
+
+
 All supporting infrastructure - the Log Analytics workspace, diagnostic settings, and Workbook dashboard - runs alongside this flow to give the full picture of where spend is going and why.
 
 ---
+
 
 ## Tools and Services Used
 
