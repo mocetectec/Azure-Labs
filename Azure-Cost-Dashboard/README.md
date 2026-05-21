@@ -319,12 +319,6 @@ Start with a blank workbook, then remove any default sample content if Azure add
 
 The first workbook section uses Azure Resource Graph to show which resource groups exist in the subscription.
 
-Add a new query:
-
-```text
-+ Add → Add query
-```
-
 Configure the query:
 
 | Setting | Value |
@@ -350,16 +344,12 @@ This confirms the workbook can query Azure Resource Graph and gives a simple inv
 
 To show the resources deployed across the subscription, add another Azure Resource Graph query.
 
+Query:
+
 ```kusto
 resources
 | project name, type, resourceGroup, location
 | order by resourceGroup asc, type asc, name asc
-```
-
-Recommended visualization:
-
-```text
-Grid
 ```
 
 This makes it easy to see what resources exist, where they are deployed, and which resource group they belong to.
@@ -368,13 +358,7 @@ This makes it easy to see what resources exist, where they are deployed, and whi
 
 ### 4. Add Cost by Resource Group
 
-The original lab suggested using **Add metric** and selecting **Cost Management** as the resource type. In practice, Cost Management was not available in the Metrics picker, so I used the **Azure Resource Manager** data source and queried the Cost Management API directly.
-
-Add a new query:
-
-```text
-+ Add → Add query
-```
+The original lab suggested using **Add metric** and selecting **Cost Management** as the resource type. In practice, Cost Management was not available in the Metrics picker. Instead, I queried the Cost Management API directly using the **Azure Resource Manager** data source.
 
 Configure the query:
 
@@ -408,6 +392,14 @@ Request body:
 }
 ```
 
+Column mappings:
+
+| Column ID | Column JSON Path | Type |
+|---|---|---|
+| `ResourceGroup` | `$.properties.rows[0][1]` | string |
+| `Cost` | `$.properties.rows[0][0]` | long |
+| `Currency` | `$.properties.rows[0][2]` | string |
+
 The Cost Management API returns row data as nested arrays, so I used **Result Settings → JSON Path** to reshape the response.
 
 Result settings:
@@ -416,14 +408,6 @@ Result settings:
 |---|---|
 | Result Format | JSON Path |
 | JSON Path Table | `$` |
-
-Column mappings:
-
-| Column ID | Column JSON Path | Type |
-|---|---|---|
-| `ResourceGroup` | `$.properties.rows[0][1]` | string |
-| `Cost` | `$.properties.rows[0][0]` | long |
-| `Currency` | `$.properties.rows[0][2]` | string |
 
 Expected output:
 
@@ -435,13 +419,7 @@ Expected output:
 
 ### 5. Add Cost by Service
 
-A second Azure Resource Manager query was added to show month-to-date cost grouped by Azure service.
-
-Use the same path:
-
-```text
-/subscriptions/<subscription-id>/providers/Microsoft.CostManagement/query?api-version=2023-11-01
-```
+A second Azure Resource Manager query was added to show month-to-date cost grouped by Azure service. Same path and method as above, with grouping changed to ServiceName:
 
 Request body:
 
@@ -514,9 +492,7 @@ This helped confirm that the public IP test resource was generating networking-r
 
 ## Final Outcome
 
-This project produced a working Azure cost visibility and alerting solution.
-
-The system monitors subscription-level spend, sends email alerts when cost thresholds are reached, triggers a Logic App workflow from an Azure Monitor Action Group, and displays cost data through an Azure Workbook dashboard.
+This project produced a working Azure cost visibility and alerting solution. The system monitors subscription-level spend, sends email alerts when cost thresholds are reached, triggers a Logic App workflow from an Azure Monitor Action Group, and displays cost data through an Azure Workbook dashboard.
 
 The result is a practical FinOps-focused Azure project that demonstrates cloud cost monitoring, automation, reporting, and business-focused cloud governance.
 
