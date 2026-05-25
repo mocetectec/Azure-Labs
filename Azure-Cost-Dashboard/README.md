@@ -7,6 +7,7 @@
 
 > **Terraform · Azure Monitor · Logic Apps · Azure Workbooks**
 
+🎥 **Video walkthrough:** [Azure Cost Visibilty Dashboard](https://www.loom.com/share/658499abaccd4dee9ae81cfef5c155fa)
 ---
 
 ## Project Overview
@@ -258,6 +259,8 @@ The Logic App uses:
 
 After saving the workflow, Azure generated a callback URL for the HTTP trigger. That URL was then registered as a Logic App receiver on the Azure Monitor Action Group, completing the alert pipeline.
 
+<img width="650" height="500" alt="image" src="https://github.com/user-attachments/assets/1071880c-6a0d-47be-8895-6f3976c7a97b" />
+
 ---
 
 ## Testing and Validation
@@ -279,6 +282,8 @@ The Logic App was validated by checking run history:
 ```
 Logic App → Runs history
 ```
+
+<img width="1674" height="555" alt="image" src="https://github.com/user-attachments/assets/64881bf4-33af-4714-b3a6-61b3e36c0265" />
 
 A successful run entry confirmed the Action Group was able to trigger the Logic App and the full alert pipeline was working end to end.
 
@@ -454,6 +459,8 @@ Example response data:
 | Virtual Network | 0.0438652777777778 | USD |
 
 This helped confirm that the public IP test resource was generating networking-related cost data under **Virtual Network**.
+
+<img width="3291" height="1589" alt="image" src="https://github.com/user-attachments/assets/57505344-32d0-4928-bf2a-1282a337ef73" />
 
 ---
 
