@@ -1,4 +1,6 @@
 # Automated Backup System
+![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=flat&logo=terraform&logoColor=white)
+![Azure](https://img.shields.io/badge/Azure-0078D4?style=flat&logo=microsoftazure&logoColor=white)
 
 Many small businesses still rely on manual backups: someone occasionally copies files to an external drive and hopes nothing gets missed. That approach fails in predictable ways. People get busy, go on vacation, forget, or assume someone else handled it. When data is eventually lost, there may be no reliable way to recover it.
 
@@ -6,11 +8,39 @@ This project replaces that fragile manual process with an automated cloud backup
 
 The result is a backup workflow that reduces human error, improves recoverability, controls storage cost, and provides visibility into whether backups are still running as expected.
 
-🎥 **Video walkthrough:**
-
 ## Architecture Overview
 
-This lab simulates a complete small-business backup workflow using Azure Blob Storage, lifecycle management, monitoring, and workflow automation.
+The system is split into two layers that work together — a storage and data protection layer on the left, and a monitoring and automation layer on the right.
+
+The storage layer is the foundation. Files land in one of three private containers inside a geo-redundant storage account. The moment a file is uploaded, Azure replicates it asynchronously to a secondary region — East US to West US — so a regional failure doesn't take the backup down with it. Blob versioning runs continuously in the background, preserving every previous version of every file so accidental deletions and overwrites are recoverable. The lifecycle policy handles cost automatically, moving files from Hot to Cool storage after 30 days, to Archive after 90, and deleting them after 365.
+
+The monitoring and automation layer watches the storage account and keeps the business owner informed. Storage diagnostic settings forward read, write, and delete activity into a Log Analytics Workspace, creating a complete audit trail of backup activity. Two things run off the back of that:
+
+- A **Logic App** runs on a daily schedule at 8 AM, checks the documents container, and sends a confirmation email with a live file count — so the business owner knows the system is working without having to log into the portal
+- A **Monitor alert rule** watches for zero write transactions over any 24-hour window. If backups stop flowing, the alert fires to the Action Group and an email goes out
+
+The Action Group connects both sides. Whether the alert is triggered by the Monitor rule detecting a write failure or by the Logic App's daily confirmation run, the Action Group handles where the notification goes.
+
+<img width="950" height="650" alt="azbackupsystem" src="https://github.com/user-attachments/assets/9f8b9113-9b3c-45d3-979a-60820e0a7a01" />
+
+### What gets built
+
+```
+rg-backup-[yourname]
+├── Storage Account (stbackup[yourname]) — GRS · TLS 1.2
+│   ├── Container: documents
+│   ├── Container: database-exports
+│   ├── Container: application-files
+│   ├── Blob Versioning — enabled · 30-day soft delete
+│   └── Lifecycle Policy — Hot → Cool (30d) → Archive (90d) → Delete (365d)
+├── Log Analytics Workspace — 30-day retention
+├── Storage Diagnostic Settings — StorageRead · StorageWrite · StorageDelete
+├── Logic App Workflow — daily 8 AM confirmation email
+├── Monitor Alert Rule — fires if zero writes in 24 hours
+└── Monitor Action Group — routes notifications to configured email
+```
+
+**11 resources. One `terraform apply`.**
 
 ## Core Components
 
@@ -57,22 +87,11 @@ The infrastructure for this project is defined with Terraform. The configuration
 
 ### `variables.tf`
 
-The `variables.tf` file defines the input variables used during deployment.
-
-These variables include:
-
-- Deploying user's name
-- Azure region
-- Alert email address
-- Resource tags
-
-This keeps the configuration reusable across different users, environments, and Azure regions.
+Defines input variables for the deploying user's name, Azure region, alert email address, and resource tags — the only values that need to change between environments.
 
 ### `main.tf`
 
-The `main.tf` file contains the primary Terraform configuration for the backup system.
-
-It creates the Azure resources required for storage, monitoring, automation, and alerting:
+The `main.tf` file contains the primary Terraform configuration for the backup system. It creates the Azure resources required for storage, monitoring, automation, and alerting:
 
 - Resource group
 - Geo-redundant storage account
@@ -85,18 +104,141 @@ It creates the Azure resources required for storage, monitoring, automation, and
 - Azure Monitor alert rule
 - Logic App workflow
 
+#### Storage Account — the foundation of the backup system
+
+The storage account is configured with several settings that make it production-appropriate for backup workloads, not just a default file store.
+
+`account_replication_type = "GRS"` replicates data to a secondary Azure region automatically. If an entire region goes offline, the data still exists in the secondary. For a backup system this is the correct choice — LRS only replicates within a single region and offers no protection against a regional failure.
+
+`min_tls_version = "TLS1_2"` enforces that all connections use TLS 1.2 or higher. Older versions have known vulnerabilities and should not be used for backup data.
+
+`versioning_enabled = true` is what makes this a real backup system rather than just a file store. Every time a file is overwritten or deleted, Azure preserves the previous version. A user who accidentally deletes or corrupts a file does not lose the data permanently.
+
+`delete_retention_policy` with `days = 30` keeps deleted blobs in a soft-deleted state for 30 days before permanently removing them — a safety net on top of versioning.
+
+```hcl
+resource "azurerm_storage_account" "backup" {
+  name                     = "stbackup${var.yourname}"
+  resource_group_name      = azurerm_resource_group.main.name
+  location                 = var.location
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+  min_tls_version          = "TLS1_2"
+
+  blob_properties {
+    versioning_enabled = true
+
+    delete_retention_policy {
+      days = 30
+    }
+
+    container_delete_retention_policy {
+      days = 30
+    }
+  }
+
+  tags = var.tags
+}
+```
+
+#### Lifecycle Management Policy — automated cost control
+
+This policy is what keeps backup storage costs from growing unbounded over time. Azure has four storage tiers — Hot, Cool, Cold, and Archive — each progressively cheaper to store but more expensive to read. The lifecycle policy moves files through these tiers automatically based on age, without any manual intervention.
+
+The `base_blob` rule applies to the current version of each file. After 30 days without modification it moves to Cool, after 90 days to Archive, and after 365 days it is deleted. The `version` rule applies to older superseded versions — these are retained for 30 days and then permanently removed. Keeping old versions indefinitely would grow costs without limit.
+
+The `prefix_match` filter scopes the policy to all three backup containers.
+
+```hcl
+resource "azurerm_storage_management_policy" "lifecycle" {
+  storage_account_id = azurerm_storage_account.backup.id
+
+  rule {
+    name    = "backup-lifecycle"
+    enabled = true
+
+    filters {
+      blob_types   = ["blockBlob"]
+      prefix_match = ["documents/", "database-exports/", "application-files/"]
+    }
+
+    actions {
+      base_blob {
+        tier_to_cool_after_days_since_modification_greater_than    = 30
+        tier_to_archive_after_days_since_modification_greater_than = 90
+        delete_after_days_since_modification_greater_than          = 365
+      }
+
+      version {
+        delete_after_days_since_creation = 30
+      }
+    }
+  }
+}
+```
+
+| Stage | Trigger | Action |
+|---|---|---|
+| 30 days since last modification | Base blob | Move to Cool tier |
+| 90 days since last modification | Base blob | Move to Archive tier |
+| 365 days since last modification | Base blob | Delete permanently |
+| 30 days since creation | Older versions | Delete permanently |
+
+#### Monitor Alert Rule — detect when backups stop
+
+This alert fires if the storage account receives zero write transactions in a 24-hour window. If nothing is being written to backup storage, something has gone wrong upstream — and the business owner should know before days go by unnoticed.
+
+`metric_name = "Transactions"` with `operator = "LessThan"` and `threshold = 1` means the alert fires when the write count drops to zero.
+
+The `dimension` filter on `ApiName` with values `PutBlob` and `PutBlock` is a critical detail. Without this filter the alert would evaluate *all* storage transactions — reads, deletes, metadata calls — and would fire any time the account was simply quiet. Scoping it to write operations means the alert only fires when backups specifically have stopped.
+
+```hcl
+resource "azurerm_monitor_metric_alert" "no_writes" {
+  name                = "alert-no-backup-writes"
+  resource_group_name = azurerm_resource_group.main.name
+  scopes              = [azurerm_storage_account.backup.id]
+  description         = "Fires if no files have been written to backup storage in 24 hours."
+  severity            = 2
+  frequency           = "PT1H"
+  window_size         = "P1D"
+
+  criteria {
+    metric_namespace = "Microsoft.Storage/storageAccounts"
+    metric_name      = "Transactions"
+    aggregation      = "Total"
+    operator         = "LessThan"
+    threshold        = 1
+
+    dimension {
+      name     = "ApiName"
+      operator = "Include"
+      values   = ["PutBlob", "PutBlock"]
+    }
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.backup_alerts.id
+  }
+
+  tags = var.tags
+}
+```
+
 ### `outputs.tf`
 
-The `outputs.tf` file displays useful values after `terraform apply` completes.
+Prints useful values to the terminal after `terraform apply` completes:
 
-Outputs include:
+- **Storage account name** — used to reference the account in CLI commands and portal navigation
+- **Storage account connection string** — used to connect the Logic App to the storage account; marked `sensitive = true` so Terraform does not print it in plain text
+- **Log Analytics Workspace ID** — used to confirm diagnostic settings are pointing to the correct workspace
+- **Logic App access endpoint** — used to wire the Logic App into the Action Group after portal configuration
 
-- Storage account name
-- Storage account connection string
-- Log Analytics Workspace ID
-- Logic App access endpoint
+To retrieve the connection string after deploy:
 
-These outputs make it easier to complete portal-based configuration, connect the Logic App to the storage account, and validate the deployment.
+```bash
+terraform output -raw storage_account_connection_string
+```
+
 
 ## Configure the Logic App (portal)
 
@@ -119,12 +261,12 @@ The Logic App is created by Terraform, but the workflow steps are configured man
 terraform output -raw storage_account_connection_string
 ```
 7. Add a new step:
-    - Service: Office 365 Outlook
-    - Action: Send an email (V2)
+    - Service: **Office 365 Outlook**
+    - Action: **Send an email (V2)**
 
 8. Configure the email action: 
-    - Subject: Daily Backup Confirmation — @{formatDateTime(utcNow(), 'yyyy-MM-dd')}
-    - Body: Backup system status: Active. Files in documents container: @{length(body('List_blobs')?['value'])}. All backup containers are protected and healthy.
+    - **Subject**: Daily Backup Confirmation — @{formatDateTime(utcNow(), 'yyyy-MM-dd')}
+    - **Body**: Backup system status: Active. Files in documents container: @{length(body('List_blobs')?['value'])}. All backup containers are protected and healthy.
 
 9. Save the workflow.
 
