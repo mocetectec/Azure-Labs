@@ -8,6 +8,9 @@ This project replaces that fragile manual process with an automated cloud backup
 
 The result is a backup workflow that reduces human error, improves recoverability, controls storage cost, and provides visibility into whether backups are still running as expected.
 
+🎥 **Video walkthrough:** [Azure Automated Backup System](https://www.loom.com/share/8b63e1c9a3ee4c79958d0e30fcf0499d)
+---
+
 ## Architecture Overview
 
 The system is split into two layers that work together — a storage and data protection layer on the left, and a monitoring and automation layer on the right.
@@ -337,6 +340,9 @@ az storage blob list \
 ```
 
 >You should see two rows for test/backup_test.txt: the current version and one previous version.
+
+<img width="1783" height="173" alt="image" src="https://github.com/user-attachments/assets/9ed3a483-8271-40f4-a119-add48dfae602" />
+
 
 >If versions are not visible in the Azure portal, open the container view and toggle **Show versions**.
 
